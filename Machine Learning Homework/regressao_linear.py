@@ -1,3 +1,18 @@
+# --------------------------
+# Exemplos da Huaweii
+# UnB - HCIA - Turma 1
+# --------------------------
+# Aluno Guilherme Braga, 17/0162290
+# Estudo de Exercícios de Machine Learning, entrega 30/03/2022
+# Usuário gui1080 no Github
+# --------------------------
+# Fontes (Gabriel Ferreira/Huaweii)
+# Aula: https://www.youtube.com/watch?v=00YVrBhHucY
+# Repositório: https://gitlab.com/Gabrielcarvfer/hcia-ai-ml-examples-unb/-/tree/master/ 
+# --------------------------
+# Testado no Ubuntu 20.04.4 LTS, com Python 3 e Visual Studio Code
+# --------------------------
+
 import matplotlib.pyplot as plt  # Biblioteca para plotagem
 import random
 
@@ -19,22 +34,27 @@ pares_xy = [
 x = [par[0] for par in pares_xy]
 y = [par[1] for par in pares_xy]
 
+# mostra no gráfico
 plt.scatter(x, y)
 plt.xlabel("Valores X")
 plt.ylabel("Valores Y")
 plt.show()
 
+# --------------------------
 
 def funcao_linear(a, b, x):
     return a * x + b
 
+# --------------------------
 
+# residuo é a diferença entre o medido e o estimado ao quadrado
 def residuo_metodo_minimos_quadrados(y_medido, y_aproximado):
     residuo = 0
     for i in range(len(y_medido)):
         residuo += (y_medido[i] - y_aproximado[i]) ** 2
     return residuo
 
+# --------------------------
 
 def gera_y_aproximado(a, b, x_medido):
     numeros = len(x_medido)
@@ -44,6 +64,7 @@ def gera_y_aproximado(a, b, x_medido):
         y_aproximado.append(funcao_linear(a, b, x_medido[i]))
     return y_aproximado
 
+# --------------------------
 
 def iteracao(a, b, x_medido, y_medido, taxa_aprendizagem):
     numeros = len(y_medido)
@@ -60,8 +81,10 @@ def iteracao(a, b, x_medido, y_medido, taxa_aprendizagem):
 
     return a, b
 
-
+# --------------------------
+# função principal
 def minimizacao_residuo(x_medido, y_medido, taxa_aprendizagem, iteracoes=100):
+    
     # Escolhemos 'a' e 'b' iniciais aleatoriamente
     a = random.random()
     b = random.random()
@@ -69,10 +92,14 @@ def minimizacao_residuo(x_medido, y_medido, taxa_aprendizagem, iteracoes=100):
     # Depois executamos uma série de iterações,
     # ajustando os valores de 'a' e 'b' progressivamente
     for it in range(iteracoes):
-        a, b = iteracao(a, b, x_medido, y_medido, taxa_aprendizagem)
+        
+        a, b = iteracao(a, b, x_medido, y_medido, taxa_aprendizagem) # novo "a" e "b" dado um resíduo, comparando o medido e o calculado 
+                                                                     # com a função linear
 
-        y_aproximado = gera_y_aproximado(a, b, x_medido)
-        residuo = residuo_metodo_minimos_quadrados(y_medido, y_aproximado)
+        y_aproximado = gera_y_aproximado(a, b, x_medido) # pra cada x e y, gera y = a * x + b
+        
+        residuo = residuo_metodo_minimos_quadrados(y_medido, y_aproximado) # com a e b aleatório em primeira iteração, pega resíduo
+        
         print("Iteração %d: a=%.3f, b=%.3f, residuo %.1f" % (it, a, b, residuo))
 
         if it % int(iteracoes / 5) == 0 or it == (iteracoes - 1):
@@ -82,6 +109,13 @@ def minimizacao_residuo(x_medido, y_medido, taxa_aprendizagem, iteracoes=100):
     plt.legend()
     plt.show()
 
+# --------------------------
+
+# 1^-5 é a taxa de aprendizagem
 minimizacao_residuo(x, y, 1e-5)
+
+# 1^-6 é a taxa de aprendizagem
 minimizacao_residuo(x, y, 1e-6, iteracoes=500)
+
+# 1^⁻3 é a taxa de aprendizagem, com menos iterações
 minimizacao_residuo(x, y, 1e-3, iteracoes=10)

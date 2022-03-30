@@ -1,3 +1,18 @@
+# --------------------------
+# Exemplos da Huaweii
+# UnB - HCIA - Turma 1
+# --------------------------
+# Aluno Guilherme Braga, 17/0162290
+# Estudo de Exercícios de Machine Learning, entrega 30/03/2022
+# Usuário gui1080 no Github
+# --------------------------
+# Fontes (Gabriel Ferreira/Huaweii)
+# Aula: https://www.youtube.com/watch?v=00YVrBhHucY
+# Repositório: https://gitlab.com/Gabrielcarvfer/hcia-ai-ml-examples-unb/-/tree/master/ 
+# --------------------------
+# Testado no Ubuntu 20.04.4 LTS, com Python 3 e Visual Studio Code
+# --------------------------
+
 # Ignore errors not to polute the presentation
 import warnings
 
@@ -36,13 +51,19 @@ print(boston.feature_names)
 print("Sample data volume: %d, number of features: %d" % x.shape)
 print("Target sample data volume: %d" % y.shape[0])
 
+# --------------------------
+
 x = pd.DataFrame(boston.data, columns=boston.feature_names)
 x.head()
+
+# --------------------------
 
 fig, ax = plt.subplots(ncols=1)
 ax.hist(tuple(y), density=True, bins=20)
 pd.DataFrame(y).plot(kind='density', ax=ax)
 ax.set_xlabel("Average Price of Houses (x USD 1,000)")
+
+# --------------------------
 
 # Segment the data.
 # 80% goes into the training set
@@ -56,17 +77,22 @@ print(x_train[0:10])
 x_train_og = x_train
 x_test_og = x_test
 
+# --------------------------
+
 # Standardize the data set.
 # StandardScaler removes the mean and scales to unit variance.
 # z = (x - u) / s
 ss = StandardScaler()
 x_train = ss.fit_transform(x_train)  # Fit the data and transform to scale the training set
 x_test = ss.transform(x_test)  # Performs standardization on the test set
+
 # WARNING:
 # the ss.transform() standardization use the mean values and variance from the training set from ss.fit_transform()
 # if the mean and variance of the test set is dissimilar to the training set, bad things can happen
 print("After:")
 print(x_train[0:10])
+
+# --------------------------
 
 # Set the regression model name and instantiate the model
 regression_models = {
@@ -80,6 +106,7 @@ regression_models = {
     'XgBoost': XGBRegressor()
 }
 
+# --------------------------
 
 # cv is the cross-validation idea here.
 # Output the R2 scores of all regression models.
@@ -91,6 +118,7 @@ def R2(model, x_train, x_test, y_train, y_test):
     # print("Predito:\n", y_pred, "\nMedido:\n", y_test)
     return score
 
+# --------------------------
 
 # Traverse all models to score.
 for (name, model) in regression_models.items():
@@ -124,6 +152,8 @@ for (name, model) in regression_models.items():
     score = R2(model, x_train, x_test, y_train, y_test)
     print("{}: {:.6f}".format(name, score.mean()))
 
+# --------------------------
+
 plt.figure(figsize=(16, 8), facecolor='w')
 ##Perform visualization.
 ln_x_test = range(len(x_test))
@@ -135,6 +165,8 @@ plt.plot(ln_x_test, y_test, lw=4, label=u'Real prices in the test set')
 plt.grid(True)
 plt.title(u"Boston Housing Price Forecast")
 plt.xlim(0, 101)
+
+# --------------------------
 
 # Plot lines for each model prediction
 for (name, model) in regression_models.items():
@@ -151,6 +183,7 @@ parameters = {
     'gamma': [0.001, 0.01, 0.1, 1]
     # 'rbf', 'poly' and 'sigmoid' kernel function coefficient, which affects the model performance
 }
+
 # Use grid search and perform cross validation.
 model = GridSearchCV(SVR(), param_grid=parameters, cv=3)
 model.fit(x_train, y_train)
@@ -161,6 +194,7 @@ svrs = {"Linear": SVR(kernel="linear"),
         "RBF": SVR(kernel="rbf"),
         }
 
+# --------------------------
 
 # Create a dataset with 100 samples of a given function and split into test and train sets
 def dataset(func, samples=100):
@@ -169,6 +203,7 @@ def dataset(func, samples=100):
     x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=0.2, random_state=28)
     return x_train, x_test, y_train, y_test
 
+# --------------------------
 
 # Create 3 datasets with 2*x+noise, x^2-x*noise+noise, sin(x/10)
 datasets = {
@@ -177,6 +212,7 @@ datasets = {
     "Sine": dataset(lambda x: math.sin(x / 10)),
 }
 
+# --------------------------
 
 def test_svr_kernels(datasets):
     # for each kernel and dataset, train the model, predict and plot the results in a grid
@@ -212,9 +248,12 @@ def test_svr_kernels(datasets):
 
     plt.show()
 
+# --------------------------
 
 # Show visually how different kernels fit to different data
 test_svr_kernels(datasets)
+
+# --------------------------
 
 print("Optimal parameter list:", model.best_params_)
 print("Optimal model:", model.best_estimator_)
